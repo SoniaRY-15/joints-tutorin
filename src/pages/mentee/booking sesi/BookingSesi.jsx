@@ -1,9 +1,17 @@
 import { Fragment, useMemo, useState } from "react";
 import AppIcon from "../../../components/common/AppIcon";
-import { booking, bookingDateLabel, calendarDays, timeSlots, tutor, weekdays } from "../sessionData";
+import {
+  booking,
+  bookingDateLabel,
+  calendarDays,
+  timeSlots,
+  tutor,
+  weekdays,
+} from "../sessionData";
 import { addBooking, useTutorData } from "../../../state/tutorStore";
 import { isCreditError, useFeedback } from "../../../state/feedbackContext";
 import TutorPortrait from "../../../components/common/TutorPortrait";
+import BookingCredits from "../../../components/common/BookingCredits";
 
 function BookingStepper({ step, complete }) {
   const steps = ["Pilih Jadwal", "Tinjau Rincian", "Konfirmasi"];
@@ -18,12 +26,18 @@ function BookingStepper({ step, complete }) {
           <Fragment key={label}>
             <div className="booking-step-item">
               <span className={`booking-step-dot ${isActive ? "active" : ""}`}>
-                {complete && stepNumber === 3 ? <AppIcon name="solar:check-bold" size={15} /> : stepNumber}
+                {complete && stepNumber === 3 ? (
+                  <AppIcon name="solar:check-bold" size={15} />
+                ) : (
+                  stepNumber
+                )}
               </span>
               <strong className={isActive ? "active" : ""}>{label}</strong>
             </div>
             {index < steps.length - 1 && (
-              <span className={`booking-step-line ${step > stepNumber ? "active" : ""}`} />
+              <span
+                className={`booking-step-line ${step > stepNumber ? "active" : ""}`}
+              />
             )}
           </Fragment>
         );
@@ -32,16 +46,27 @@ function BookingStepper({ step, complete }) {
   );
 }
 
-function ScheduleStep({ selectedDay, selectedTime, onDayChange, onTimeChange }) {
+function ScheduleStep({
+  selectedDay,
+  selectedTime,
+  onDayChange,
+  onTimeChange,
+}) {
   return (
     <>
       <header className="booking-panel-heading">
         <h1>Pilih Jadwal Sesi</h1>
-        <p>Pilih waktu yang sesuai denganmu. Semua waktu ditampilkan dalam zona waktumu.</p>
+        <p>
+          Pilih waktu yang sesuai denganmu. Semua waktu ditampilkan dalam zona
+          waktumu.
+        </p>
       </header>
 
       <div className="booking-schedule-grid">
-        <section className="booking-calendar" aria-label={`Kalender ${booking.monthLabel}`}>
+        <section
+          className="booking-calendar"
+          aria-label={`Kalender ${booking.monthLabel}`}
+        >
           <h2>{booking.monthLabel}</h2>
           <div className="booking-weekdays">
             {weekdays.map((day) => (
@@ -86,16 +111,27 @@ function ScheduleStep({ selectedDay, selectedTime, onDayChange, onTimeChange }) 
   );
 }
 
-function ReviewStep({ selectedDay, bookingNote, onBookingNoteChange, remainingCredits, selectedTime }) {
+function ReviewStep({
+  selectedDay,
+  bookingNote,
+  onBookingNoteChange,
+  remainingCredits,
+  selectedTime,
+}) {
   return (
     <>
       <header className="booking-panel-heading compact">
         <h1>Tinjau Rincian Sesi</h1>
-        <p>Pastikan detail tutor, jadwal, dan kredit sudah sesuai sebelum melanjutkan konfirmasi.</p>
+        <p>
+          Pastikan detail mentor, jadwal, dan kredit sudah sesuai sebelum
+          melanjutkan konfirmasi.
+        </p>
       </header>
 
       <section className="booking-review-card">
-        <div className="booking-avatar"><TutorPortrait name={tutor.name} /></div>
+        <div className="booking-avatar">
+          <TutorPortrait name={tutor.name} />
+        </div>
         <div>
           <div className="booking-review-title">
             <h2>{tutor.name}</h2>
@@ -120,7 +156,9 @@ function ReviewStep({ selectedDay, bookingNote, onBookingNoteChange, remainingCr
           <AppIcon name="solar:calendar-linear" size={20} />
           <span>Jadwal</span>
           <strong>{bookingDateLabel(selectedDay)}</strong>
-          <p>{selectedTime} {booking.timezone}</p>
+          <p>
+            {selectedTime} {booking.timezone}
+          </p>
         </section>
         <section>
           <AppIcon name="solar:card-linear" size={20} />
@@ -131,7 +169,7 @@ function ReviewStep({ selectedDay, bookingNote, onBookingNoteChange, remainingCr
       </div>
 
       <section className="booking-note">
-        <label htmlFor="booking-note">Catatan untuk tutor</label>
+        <label htmlFor="booking-note">Catatan untuk mentor</label>
         <textarea
           id="booking-note"
           placeholder={booking.notePlaceholder}
@@ -150,7 +188,7 @@ function ConfirmationStep({ complete, session }) {
         <section className="booking-success-hero">
           <AppIcon name="solar:check-circle-linear" size={68} />
           <h1>Permintaan booking tersimpan</h1>
-          <p>Jadwal telah diajukan dan menunggu konfirmasi tutor.</p>
+          <p>Jadwal telah diajukan dan menunggu konfirmasi mentor.</p>
           <span>
             <AppIcon name="solar:info-circle-linear" size={15} />
             Detail booking tersimpan di halaman sesi.
@@ -167,7 +205,7 @@ function ConfirmationStep({ complete, session }) {
 
         <p className="booking-footnote">
           <AppIcon name="solar:info-circle-linear" size={15} />
-          Tutor akan mengonfirmasi maksimal 1 x 24 jam setelah booking.
+          Mentor akan mengonfirmasi maksimal 1 x 24 jam setelah booking.
         </p>
       </>
     );
@@ -177,7 +215,7 @@ function ConfirmationStep({ complete, session }) {
     <>
       <header className="booking-panel-heading compact">
         <h1>Konfirmasi</h1>
-        <p>Lakukanlah konfirmasi untuk membuat jadwal tutoring.</p>
+        <p>Lakukan konfirmasi untuk membuat jadwal mentoring.</p>
       </header>
 
       <section className="booking-confirm-card">
@@ -186,7 +224,7 @@ function ConfirmationStep({ complete, session }) {
         <p>Klik tombol konfirmasi untuk mengonfirmasi booking sesi.</p>
         <span>
           <AppIcon name="solar:info-circle-linear" size={15} />
-          Booking dapat dibatalkan selama masih menunggu konfirmasi tutor.
+          Booking dapat dibatalkan selama masih menunggu konfirmasi mentor.
         </span>
       </section>
     </>
@@ -197,10 +235,12 @@ function TutorSummary() {
   return (
     <aside className="booking-side">
       <section className="booking-summary-panel">
-        <h2>Ringkasan Tutor</h2>
+        <h2>Ringkasan Mentor</h2>
 
         <div className="booking-summary-profile">
-          <div className="booking-summary-photo"><TutorPortrait name={tutor.name} /></div>
+          <div className="booking-summary-photo">
+            <TutorPortrait name={tutor.name} />
+          </div>
           <div>
             <div className="booking-summary-title">
               <h3>{tutor.name}</h3>
@@ -233,7 +273,10 @@ function TutorSummary() {
             <AppIcon name="bx:coin-stack" size={34} />
             <div>
               <strong>Biaya Sesi</strong>
-              <span>{tutor.credits} kredit/sesi ({tutor.sessionDurationMinutes} menit)</span>
+              <span>
+                {tutor.credits} kredit/sesi ({tutor.sessionDurationMinutes}{" "}
+                menit)
+              </span>
             </div>
           </div>
         </div>
@@ -258,11 +301,18 @@ function TeachBanner({ onTeach }) {
     <section className="booking-teach-banner">
       <div>
         <h2>Dapatkan kredit dengan mengajar!</h2>
-        <p>Bagikan ilmu yang kamu kuasai dan dapatkan kredit untuk belajar hal baru.</p>
+        <p>
+          Bagikan ilmu yang kamu kuasai dan dapatkan kredit untuk belajar hal
+          baru.
+        </p>
       </div>
-      <button className="button-white teach-banner-button" type="button" onClick={onTeach}>
+      <button
+        className="button-white teach-banner-button"
+        type="button"
+        onClick={onTeach}
+      >
         <AppIcon name="fluent:hat-graduation-12-regular" size={23} />
-        Jadi tutor
+        Jadi mentor
       </button>
     </section>
   );
@@ -300,7 +350,10 @@ export default function BookingSesi({
     }
 
     if (step === 3) {
-      if (balance < tutor.credits) { feedback.credit(balance, tutor.credits); return; }
+      if (balance < tutor.credits) {
+        feedback.credit(balance, tutor.credits);
+        return;
+      }
       setShowConfirmDialog(true);
       return;
     }
@@ -324,18 +377,32 @@ export default function BookingSesi({
 
   async function confirmBooking() {
     if (busy) return;
-    if (balance < tutor.credits) { setShowConfirmDialog(false); feedback.credit(balance, tutor.credits); return; }
-    setBusy(true); setMessage("");
-    try {
-      const value = await addBooking({ tutor: tutor.name, subject: tutor.subjects,
-        date: `${booking.month}-${selectedDay.padStart(2, "0")}`,
-        time: selectedTime.slice(0, 5), note: bookingNote });
-      setSession(value); setShowConfirmDialog(false); setComplete(true);
-    } catch (error) {
-      if (isCreditError(error)) { setShowConfirmDialog(false); feedback.credit(balance, tutor.credits); }
-      else setMessage(error.message || "Booking belum tersimpan.");
+    if (balance < tutor.credits) {
+      setShowConfirmDialog(false);
+      feedback.credit(balance, tutor.credits);
+      return;
     }
-    finally { setBusy(false); }
+    setBusy(true);
+    setMessage("");
+    try {
+      const value = await addBooking({
+        tutor: tutor.name,
+        subject: tutor.subjects,
+        date: `${booking.month}-${selectedDay.padStart(2, "0")}`,
+        time: selectedTime.slice(0, 5),
+        note: bookingNote,
+      });
+      setSession(value);
+      setShowConfirmDialog(false);
+      setComplete(true);
+    } catch (error) {
+      if (isCreditError(error)) {
+        setShowConfirmDialog(false);
+        feedback.credit(balance, tutor.credits);
+      } else setMessage(error.message || "Booking belum tersimpan.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -344,6 +411,12 @@ export default function BookingSesi({
         <div className="booking-main">
           <section className="booking-panel">
             <BookingStepper step={step} complete={complete} />
+            <BookingCredits
+              balance={balance}
+              cost={tutor.credits}
+              duration={tutor.sessionDurationMinutes}
+              confirmed={complete}
+            />
 
             {step === 1 && (
               <ScheduleStep
@@ -362,16 +435,26 @@ export default function BookingSesi({
                 selectedTime={selectedTime}
               />
             )}
-            {step === 3 && <ConfirmationStep complete={complete} session={session} />}
+            {step === 3 && (
+              <ConfirmationStep complete={complete} session={session} />
+            )}
             <p role="status">{message}</p>
 
             <div className="booking-panel-actions">
-              <button className="booking-back-button" type="button" onClick={handleBack}>
+              <button
+                className="booking-back-button"
+                type="button"
+                onClick={handleBack}
+              >
                 <AppIcon name="solar:alt-arrow-left-linear" size={20} />
                 {complete ? "Beranda" : "Kembali"}
               </button>
 
-              <button className="primary-button booking-next-button" type="button" onClick={handleNext}>
+              <button
+                className="primary-button booking-next-button"
+                type="button"
+                onClick={handleNext}
+              >
                 {primaryLabel}
                 <AppIcon name="solar:alt-arrow-right-linear" size={20} />
               </button>
@@ -386,21 +469,56 @@ export default function BookingSesi({
 
       {showConfirmDialog && (
         <div className="booking-modal-backdrop" role="presentation">
-          <section className="booking-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-booking-title">
-            <button className="booking-modal-close" type="button" aria-label="Tutup" onClick={() => setShowConfirmDialog(false)}>
+          <section
+            className="booking-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="confirm-booking-title"
+          >
+            <button
+              className="booking-modal-close"
+              type="button"
+              aria-label="Tutup"
+              onClick={() => setShowConfirmDialog(false)}
+            >
               <AppIcon name="solar:close-circle-linear" size={22} />
             </button>
-            <AppIcon className="booking-modal-icon" name="solar:info-circle-linear" size={64} />
-            <h2 id="confirm-booking-title">Yakin ingin mengonfirmasi booking?</h2>
-            <p>Pastikan jadwal dan tutor sudah sesuai. Setelah dikonfirmasi, booking akan diproses dan kredit akan terpakai.</p>
+            <AppIcon
+              className="booking-modal-icon"
+              name="solar:info-circle-linear"
+              size={64}
+            />
+            <h2 id="confirm-booking-title">
+              Yakin ingin mengonfirmasi booking?
+            </h2>
+            <p>
+              Pastikan jadwal dan mentor sudah sesuai. Setelah dikonfirmasi,
+              booking akan diproses dan kredit akan terpakai.
+            </p>
             <span>
               <AppIcon name="solar:danger-triangle-linear" size={16} />
-              Booking dapat dibatalkan sebelum tutor mengonfirmasi.
+              Booking dapat dibatalkan sebelum mentor mengonfirmasi.
             </span>
             <div>
-              <button className="primary-button" type="button" disabled={busy} onClick={confirmBooking}>{busy ? "Menyimpan…" : "Ya, Konfirmasi"}</button>
-              <p role="status">{message || (balance < tutor.credits ? "Kredit belum cukup." : "")}</p>
-              <button className="booking-cancel-button" type="button" onClick={() => setShowConfirmDialog(false)}>Batal</button>
+              <button
+                className="primary-button"
+                type="button"
+                disabled={busy}
+                onClick={confirmBooking}
+              >
+                {busy ? "Menyimpan…" : "Ya, Konfirmasi"}
+              </button>
+              <p role="status">
+                {message ||
+                  (balance < tutor.credits ? "Kredit belum cukup." : "")}
+              </p>
+              <button
+                className="booking-cancel-button"
+                type="button"
+                onClick={() => setShowConfirmDialog(false)}
+              >
+                Batal
+              </button>
             </div>
           </section>
         </div>

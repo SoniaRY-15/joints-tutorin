@@ -1,12 +1,16 @@
-
 import { useRef, useState } from "react";
 import AppIcon from "../../../components/common/AppIcon";
-import { CreditCard, WeeklyProgress, TeachBanner } from "../dashboard/Dashboard";
+import {
+  CreditCard,
+  WeeklyProgress,
+  TeachBanner,
+} from "../dashboard/Dashboard";
 import "./ProfilMentor.css";
 import { addBooking, useTutorData } from "../../../state/tutorStore";
 import { isCreditError, useFeedback } from "../../../state/feedbackContext";
 import Dropdown from "../../../components/common/Dropdown";
 import TutorPortrait from "../../../components/common/TutorPortrait";
+import BookingCredits from "../../../components/common/BookingCredits";
 
 const days = ["Sen", "Sel", "Rab", "Kam", "Jum"];
 
@@ -98,9 +102,18 @@ export default function ProfilMentor({
 
   const skills =
     tutor.name === "Angela Wilkins"
-      ? ["Frontend Web Development", "Backend API Engineering", "Public Speaking"]
+      ? [
+          "Frontend Web Development",
+          "Backend API Engineering",
+          "Public Speaking",
+        ]
       : subjects;
-  const tabs = ["Ringkasan", "Keahlian", `Ulasan (${tutor.reviews})`, "Tentang"];
+  const tabs = [
+    "Ringkasan",
+    "Keahlian",
+    `Ulasan (${tutor.reviews})`,
+    "Tentang",
+  ];
 
   const today = new Date();
   const minDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
@@ -126,7 +139,7 @@ export default function ProfilMentor({
 
     if (day === 0 || day === 6) {
       event.currentTarget.elements.date.setCustomValidity(
-        "Pilih hari Senin sampai Jumat sesuai ketersediaan mentor."
+        "Pilih hari Senin sampai Jumat sesuai ketersediaan mentor.",
       );
       event.currentTarget.elements.date.reportValidity();
       return;
@@ -134,7 +147,11 @@ export default function ProfilMentor({
 
     try {
       const required = tutor.creditsCourse || tutor.credits;
-      if (balance < required) { dialogRef.current?.close(); feedback.credit(balance, required); return; }
+      if (balance < required) {
+        dialogRef.current?.close();
+        feedback.credit(balance, required);
+        return;
+      }
       await addBooking({
         tutor: tutor.name,
         subject: form.get("subject"),
@@ -145,13 +162,17 @@ export default function ProfilMentor({
 
       dialogRef.current?.close();
       setMessage(
-        `Permintaan booking dengan ${tutor.name} tersimpan di server untuk ${date}, pukul ${form.get("time")} WIB.`
+        `Permintaan booking dengan ${tutor.name} tersimpan di server untuk ${date}, pukul ${form.get("time")} WIB.`,
       );
       formElement.reset();
     } catch (error) {
-      if (isCreditError(error)) { dialogRef.current?.close(); feedback.credit(balance, tutor.creditsCourse || tutor.credits); return; }
+      if (isCreditError(error)) {
+        dialogRef.current?.close();
+        feedback.credit(balance, tutor.creditsCourse || tutor.credits);
+        return;
+      }
       setMessage(
-        error.message || "Permintaan booking belum tersimpan. Coba kembali."
+        error.message || "Permintaan booking belum tersimpan. Coba kembali.",
       );
     }
   }
@@ -202,7 +223,11 @@ export default function ProfilMentor({
           {message}
         </p>
 
-        <div className="mentor-tabs" role="tablist" aria-label="Informasi mentor">
+        <div
+          className="mentor-tabs"
+          role="tablist"
+          aria-label="Informasi mentor"
+        >
           {tabs.map((label, index) => (
             <button
               key={label}
@@ -253,13 +278,13 @@ export default function ProfilMentor({
                     {(tab === "Ringkasan" ? skills.slice(0, 2) : skills).map(
                       (skill) => (
                         <span key={skill}>{skill}</span>
-                      )
+                      ),
                     )}
                   </div>
                   {tab === "Keahlian" && (
                     <p>
-                      Pembelajaran privat sesuai kebutuhan course, dengan latihan
-                      praktik dan review hasil kerja.
+                      Pembelajaran privat sesuai kebutuhan course, dengan
+                      latihan praktik dan review hasil kerja.
                     </p>
                   )}
                 </section>
@@ -298,7 +323,9 @@ export default function ProfilMentor({
           {(tab === "Ringkasan" || tab.startsWith("Ulasan")) && (
             <section className="mentor-panel mentor-reviews">
               <div className="mentor-panel-heading">
-                <h2>{tab === "Ringkasan" ? "Ulasan Terbaru" : "Ulasan Mentee"}</h2>
+                <h2>
+                  {tab === "Ringkasan" ? "Ulasan Terbaru" : "Ulasan Mentee"}
+                </h2>
                 {tab === "Ringkasan" && (
                   <button onClick={() => setTab(tabs[2])}>Lihat Semua</button>
                 )}
@@ -360,8 +387,14 @@ export default function ProfilMentor({
         </div>
 
         <form onSubmit={bookSession}>
+          <BookingCredits
+            balance={balance}
+            cost={tutor.creditsCourse || tutor.credits}
+            unit="course"
+          />
           <p>
-            {tutor.name} / {tutor.creditsCourse || tutor.credits} kredit per course
+            {tutor.name} / {tutor.creditsCourse || tutor.credits} kredit per
+            course
           </p>
 
           <label htmlFor="mentor-book-subject">Course</label>
@@ -393,7 +426,7 @@ export default function ProfilMentor({
             value={bookingTime}
             onChange={setBookingTime}
             options={["09:00", "10:00", "11:00", "13:00", "14:00", "15:00"].map(
-              (time) => ({ value: time, label: time })
+              (time) => ({ value: time, label: time }),
             )}
           />
 
