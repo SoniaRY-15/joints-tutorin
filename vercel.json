@@ -4,7 +4,7 @@
   "outputDirectory": "dist",
   "functions": {
     "api/index.js": {
-      "includeFiles": "**/src/**"
+      "includeFiles": "{**/src/**,node_modules/crossword-layout-generator/**}"
     }
   },
   "rewrites": [
