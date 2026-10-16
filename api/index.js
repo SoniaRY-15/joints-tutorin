@@ -18,6 +18,13 @@ function getApp() {
 
 export default async function handler(req, res) {
   try {
+    const originalUrl = new URL(req.url, 'http://vercel.local');
+    const forwardedParams = new URLSearchParams(originalUrl.searchParams);
+    const apiPath = forwardedParams.get('path') || '';
+    forwardedParams.delete('path');
+    const query = forwardedParams.toString();
+    req.url = `/api/${apiPath}${query ? `?${query}` : ''}`;
+
     const app = await getApp();
     return app(req, res);
   } catch (error) {
