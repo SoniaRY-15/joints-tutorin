@@ -10,6 +10,7 @@ let appPromise;
 
 function getApp() {
   if (!appPromise) {
+    if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL belum dikonfigurasi.');
     const dataFile = process.env.DATA_FILE || path.join(os.tmpdir(), 'tutorin-vercel.json');
     appPromise = openStorage(dataFile).then((storage) => createApp(storage));
   }

@@ -31,7 +31,8 @@ async function createApp(storage, options = {}) {
   app.use(cors({ origin: (process.env.FRONTEND_URL || 'http://localhost:5173').split(',').map((v) => v.trim()) }));
   app.use(express.json({ limit: '8mb' }));
   app.use((_req, res, next) => { res.setHeader('Cache-Control', 'no-store'); next(); });
-  app.get('/api/health', (_req, res) => res.json({ status: 'ok', storage: 'file', paymentMode: 'demo' }));
+  if (storage.refresh) app.use('/api', route(async (_req, _res, next) => { await storage.refresh(); next(); }));
+  app.get('/api/health', (_req, res) => res.json({ status: 'ok', storage: storage.refresh ? 'postgresql' : 'file', paymentMode: 'demo' }));
   const publicUser = (u) => ({ id: u.id, name: u.name, email: u.email, guest: u.guest });
   const session = (u) => ({ token: jwt.sign({ id: u.id }, secret, { expiresIn: '7d', algorithm: 'HS256' }), user: publicUser(u) });
   const auth = (req, _res, next) => {

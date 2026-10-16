@@ -14,7 +14,7 @@ npm run dev
 
 `npm run dev` menjalankan frontend dan backend bersama. Buka alamat yang dicetak Vite (biasanya `http://localhost:5173`). API memakai `http://127.0.0.1:5000/api`; Vite meneruskan `/api` ke backend. Untuk menjalankan terpisah, gunakan `npm run dev:frontend` dan `npm run dev:backend` di dua terminal. Di PowerShell dengan pembatasan execution policy, gunakan `npm.cmd` sebagai pengganti `npm`.
 
-Data permanen ditulis secara atomik ke `backend/data/tutorin.json`, dengan antrean transaksi untuk menangani operasi bersamaan. File ini berisi data privat dan hash password; jangan dipublikasikan atau dimasukkan Git. Penyimpanan ini ditujukan untuk satu proses backend lokal. Deployment dengan beberapa instance membutuhkan database bersama. Model Sequelize lama dipertahankan, tetapi tidak dipakai oleh server aktif; MySQL tidak diperlukan untuk alur ini.
+Tanpa `DATABASE_URL`, backend lokal menyimpan data secara atomik ke `backend/data/tutorin.json`. Jika `DATABASE_URL` diisi, backend memakai PostgreSQL dan tabel `tutorin_state` (dibuat otomatis); transaksi dikunci di PostgreSQL agar perubahan lintas instance tidak saling menimpa.
 
 ## Akun dan sinkronisasi
 
@@ -26,13 +26,13 @@ Pembayaran, profil industry mentor, dan lowongan tetap berupa **simulasi**. Belu
 
 ## Konfigurasi
 
-Lihat `backend/.env.example`. Konfigurasi opsional: `PORT`, `HOST`, `FRONTEND_URL` (origin dipisahkan koma), `DATA_FILE`, dan `JWT_SECRET`. Jika secret tidak disetel, backend menyimpan secret acak agar token tetap valid setelah restart. Konfigurasi MySQL di `.env` lama tidak digunakan oleh penyimpanan file.
+Lihat `backend/.env.example`. Konfigurasi: `DATABASE_URL` untuk PostgreSQL, `PORT`, `HOST`, `FRONTEND_URL` (origin dipisahkan koma), `DATA_FILE` (mode file), dan `JWT_SECRET`. Atur `JWT_SECRET` yang sama dan stabil di semua environment backend.
 
 Frontend memakai `/api` secara default. Untuk domain API terpisah, set `VITE_API_URL=https://domain-api/api` saat build dan izinkan origin frontend melalui `FRONTEND_URL`. Untuk mengganti proxy lokal, set environment variable `API_PROXY_TARGET` sebelum menjalankan Vite.
 
 ### Vercel
 
-`vercel.json` mengatur build frontend, fallback halaman React, dan fungsi serverless untuk semua rute `/api/*`. Fungsi tersebut menjalankan backend Express yang sama; variabel `VITE_API_URL` tidak perlu diisi untuk deployment satu domain. Agar data akun tetap tersimpan lintas cold start dan deployment, backend perlu dipindahkan ke database persisten dan variabel koneksinya dikonfigurasi di Vercel. Penyimpanan file bawaan hanya cocok untuk development; direktori sementara fungsi Vercel tidak menjamin data bertahan.
+`vercel.json` mengatur build frontend, fallback halaman React, dan fungsi serverless untuk semua rute `/api/*`. Fungsi tersebut menjalankan backend Express yang sama; variabel `VITE_API_URL` tidak perlu diisi untuk deployment satu domain. Tambahkan `DATABASE_URL` (connection string Neon) dan `JWT_SECRET` sebagai Environment Variables di Vercel lalu redeploy. Fungsi Vercel memerlukan `DATABASE_URL`; jangan simpan connection string di repository.
 
 ## API
 
