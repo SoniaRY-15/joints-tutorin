@@ -1,0 +1,13 @@
+{
+  "installCommand": "npm install && npm --prefix backend install --omit=dev",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "functions": {
+    "api/[...path].js": {
+      "includeFiles": "backend/src/**"
+    }
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

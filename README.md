@@ -30,6 +30,10 @@ Lihat `backend/.env.example`. Konfigurasi opsional: `PORT`, `HOST`, `FRONTEND_UR
 
 Frontend memakai `/api` secara default. Untuk domain API terpisah, set `VITE_API_URL=https://domain-api/api` saat build dan izinkan origin frontend melalui `FRONTEND_URL`. Untuk mengganti proxy lokal, set environment variable `API_PROXY_TARGET` sebelum menjalankan Vite.
 
+### Vercel
+
+`vercel.json` mengatur build frontend, fallback halaman React, dan fungsi serverless untuk semua rute `/api/*`. Fungsi tersebut menjalankan backend Express yang sama; variabel `VITE_API_URL` tidak perlu diisi untuk deployment satu domain. Agar data akun tetap tersimpan lintas cold start dan deployment, backend perlu dipindahkan ke database persisten dan variabel koneksinya dikonfigurasi di Vercel. Penyimpanan file bawaan hanya cocok untuk development; direktori sementara fungsi Vercel tidak menjamin data bertahan.
+
 ## API
 
 | Area | Endpoint utama |
