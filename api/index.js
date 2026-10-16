@@ -28,7 +28,7 @@ export default async function handler(req, res) {
     const app = await getApp();
     return app(req, res);
   } catch (error) {
-    console.error('API gagal dimulai:', error.message);
+    console.error('API gagal dimulai:', error.stack || error);
     return res.status(500).json({ message: 'Server belum dapat memproses permintaan. Coba kembali.' });
   }
 }
